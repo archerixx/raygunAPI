@@ -12,10 +12,18 @@ db = couch['raygun_errors']
 @app.route("/api/raygun_webhook", methods=['POST'])
 def addToDatabase():
     req = request.json
-    doc = db[request.json["application"]["name"]]
-    doc["reports"].append(req)
-    db.save(doc)
-    return "Doc updated"
+
+    for id in db:
+        if id == request.json["application"]["name"]:
+            doc = db[request.json["application"]["name"]]
+            doc["reports"].append(req)
+            db.save(doc)
+            return "Doc updated"
+        else:
+            doc = {"_id": request.json["application"]["name"], "reports": [req]}
+            db.save(doc)
+            return "Doc created"
+
 
 
 @app.route("/<application_name>")
