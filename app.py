@@ -18,6 +18,10 @@ else:
 couch = couchdb.Server(couch_conn_string)
 db = couch['raygun_errors']
 
+@app.route("/", methods=['GET'])
+def welcome():
+    return "Welcome to Raygun API"
+
 @app.route("/api/raygun_webhook", methods=['POST'])
 def addToDatabase():
     req = request.json
@@ -28,10 +32,9 @@ def addToDatabase():
             doc["reports"].append(req)
             db.save(doc)
             return "Doc updated"
-        else:
-            doc = {"_id": request.json["application"]["name"], "reports": [req]}
-            db.save(doc)
-            return "Doc created"
+    doc = {"_id": request.json["application"]["name"], "reports": [req]}
+    db.save(doc)
+    return "Doc created"
 
 
 
@@ -73,31 +76,26 @@ def showRaygunErrorTable(application_name):
 
                     </body>
                     </html>
-                """
-            return (
-                html
-            )
-        else:
-                html = f"""<!DOCTYPE html>
-                <html>
-                <style>
-                table, th, td {{
-                border:1px solid black;
-                }}
-                </style>
-                <body>
+                    """
+            return html
+    return (
+        f"""<!DOCTYPE html>
+        <html>
+        <style>
+        table, th, td {{
+        border:1px solid black;
+        }}
+        </style>
+        <body>
 
-                <h2>Raygun issues</h2>
+        <h2>Raygun issues</h2>
 
-                <p>Visit <a href={"https://app.raygun.com/"}>Raygun</a> for more information</p>
+        <p>Visit <a href={"https://app.raygun.com/"}>Raygun</a> for more information</p>
 
-                </body>
-                </html>
-            """
-        return (
-            html
-        )
-
+        </body>
+        </html>
+    """
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
