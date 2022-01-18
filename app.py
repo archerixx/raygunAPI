@@ -1,5 +1,6 @@
 from flask import Flask, request
 import couchdb
+import os
 
 # api setup
 app = Flask(__name__)
