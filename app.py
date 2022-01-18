@@ -25,8 +25,6 @@ def welcome():
 @app.route("/api/raygun_webhook", methods=['POST', 'GET'])
 def addToDatabase():
     req = request.json
-    print(req)
-    return req
 
     for id in db:
         if id == request.json["application"]["name"]:
